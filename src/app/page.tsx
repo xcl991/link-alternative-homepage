@@ -57,11 +57,11 @@ export default function HomePage() {
     const categories: BackgroundCategory[] = [];
 
     // Add website-exclusive backgrounds if available
-    if (selectedWebsite.exclusiveBackgrounds && selectedWebsite.exclusiveBackgrounds.length > 0) {
+    if (selectedWebsite.backgrounds && selectedWebsite.backgrounds.length > 0) {
       categories.push({
         id: `exclusive-${selectedWebsite.id}`,
         name: `Exclusive ${selectedWebsite.name}`,
-        backgrounds: selectedWebsite.exclusiveBackgrounds,
+        backgrounds: selectedWebsite.backgrounds,
       });
     }
 
@@ -71,8 +71,8 @@ export default function HomePage() {
 
   // Auto-select exclusive background when website changes
   useEffect(() => {
-    if (selectedWebsite.exclusiveBackgrounds && selectedWebsite.exclusiveBackgrounds.length > 0) {
-      setSelectedBackground(selectedWebsite.exclusiveBackgrounds[0]);
+    if (selectedWebsite.backgrounds && selectedWebsite.backgrounds.length > 0) {
+      setSelectedBackground(selectedWebsite.backgrounds[0]);
     }
   }, [selectedWebsite]);
 
