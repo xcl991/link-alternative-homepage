@@ -40,6 +40,15 @@ export default function HomePage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [progress, setProgress] = useState(0);
 
+  // GIF output settings
+  const [outputSize, setOutputSize] = useState<'small' | 'medium' | 'large'>('medium');
+
+  const sizeConfig = {
+    small: { width: 640, height: 320, scale: 0.2 },
+    medium: { width: 960, height: 480, scale: 0.3 },
+    large: { width: 1280, height: 640, scale: 0.4 },
+  };
+
   // Ref for preview element
   const previewRef = useRef<HTMLDivElement>(null);
 
@@ -124,39 +133,43 @@ export default function HomePage() {
     setRightModalImages(prev => prev.map(img => img.id === id ? { ...img, url, name } : img));
   }, []);
 
-  // Generate GIF
+  // Generate GIF with compression
   const generateGif = async () => {
     if (!previewRef.current) return;
 
     setIsGenerating(true);
     setProgress(0);
 
+    const config = sizeConfig[outputSize];
+
     try {
       const gif = new GIF({
-        workers: 4,
-        quality: 10,
-        width: 3200,
-        height: 1600,
+        workers: 2,
+        quality: 20, // Higher = more compression (1-30)
+        width: config.width,
+        height: config.height,
         workerScript: '/gif.worker.js',
+        dither: false, // Disable dithering for smaller file
       });
 
-      const totalFrames = 60; // 2 seconds at 30fps
-      const frameDelay = 1000 / 30; // ~33ms per frame
+      const totalFrames = 24; // Reduced frames (was 60)
+      const frameDelay = 80; // ~12fps for smoother but smaller file
 
       // Capture frames
       for (let frame = 0; frame < totalFrames; frame++) {
         // Update animation frame
-        setAnimationFrame(frame * 2); // Multiply to speed up animation
+        setAnimationFrame(frame * 5); // Speed up animation cycle
 
         // Wait for render
-        await new Promise(resolve => setTimeout(resolve, 50));
+        await new Promise(resolve => setTimeout(resolve, 60));
 
-        // Capture frame
+        // Capture frame at reduced size
         const dataUrl = await toPng(previewRef.current, {
-          width: 3200,
-          height: 1600,
+          width: config.width,
+          height: config.height,
           pixelRatio: 1,
           cacheBust: true,
+          quality: 0.8,
         });
 
         // Convert to image
@@ -170,16 +183,20 @@ export default function HomePage() {
         // Add frame to GIF
         gif.addFrame(img, { delay: frameDelay, copy: true });
 
-        setProgress(Math.round((frame / totalFrames) * 100));
+        setProgress(Math.round(((frame + 1) / totalFrames) * 100));
       }
 
       // Render GIF
       gif.on('finished', (blob: Blob) => {
+        // Show file size
+        const sizeMB = (blob.size / (1024 * 1024)).toFixed(2);
+        console.log(`GIF size: ${sizeMB} MB`);
+
         // Download
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `${selectedWebsite.name.toLowerCase().replace(/\s+/g, '-')}-link-alternatif.gif`;
+        a.download = `${selectedWebsite.name.toLowerCase().replace(/\s+/g, '-')}-link-alternatif-${config.width}x${config.height}.gif`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -246,8 +263,31 @@ export default function HomePage() {
           onShuffleStyle={shuffleStyle}
         />
 
-        {/* Generate Button */}
-        <div className="flex justify-center gap-4">
+        {/* Output Size & Generate Button */}
+        <div className="flex flex-col items-center gap-4">
+          {/* Size Selector */}
+          <div className="flex items-center gap-4 bg-gray-900 rounded-lg p-4">
+            <span className="text-gray-300 font-medium">Ukuran Output:</span>
+            <div className="flex gap-2">
+              {(['small', 'medium', 'large'] as const).map((size) => (
+                <button
+                  key={size}
+                  onClick={() => setOutputSize(size)}
+                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                    outputSize === size
+                      ? 'bg-cyan-600 text-white'
+                      : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                  }`}
+                >
+                  {size === 'small' && '640x320 (~1-2MB)'}
+                  {size === 'medium' && '960x480 (~2-4MB)'}
+                  {size === 'large' && '1280x640 (~4-8MB)'}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Generate Button */}
           <Button
             size="lg"
             onClick={generateGif}
@@ -262,7 +302,7 @@ export default function HomePage() {
             ) : (
               <>
                 <Download className="w-6 h-6 mr-2" />
-                Download GIF
+                Download GIF ({sizeConfig[outputSize].width}x{sizeConfig[outputSize].height})
               </>
             )}
           </Button>
