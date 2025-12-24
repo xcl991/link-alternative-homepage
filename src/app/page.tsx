@@ -133,6 +133,16 @@ export default function HomePage() {
     setRightModalImages(prev => prev.map(img => img.id === id ? { ...img, url, name } : img));
   }, []);
 
+  // Scale image using canvas
+  const scaleImage = (img: HTMLImageElement, targetWidth: number, targetHeight: number): HTMLCanvasElement => {
+    const canvas = document.createElement('canvas');
+    canvas.width = targetWidth;
+    canvas.height = targetHeight;
+    const ctx = canvas.getContext('2d')!;
+    ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+    return canvas;
+  };
+
   // Generate GIF with compression
   const generateGif = async () => {
     if (!previewRef.current) return;
@@ -152,8 +162,8 @@ export default function HomePage() {
         dither: false, // Disable dithering for smaller file
       });
 
-      const totalFrames = 24; // Reduced frames (was 60)
-      const frameDelay = 80; // ~12fps for smoother but smaller file
+      const totalFrames = 24; // Reduced frames
+      const frameDelay = 80; // ~12fps
 
       // Capture frames
       for (let frame = 0; frame < totalFrames; frame++) {
@@ -161,27 +171,29 @@ export default function HomePage() {
         setAnimationFrame(frame * 5); // Speed up animation cycle
 
         // Wait for render
-        await new Promise(resolve => setTimeout(resolve, 60));
+        await new Promise(resolve => setTimeout(resolve, 80));
 
-        // Capture frame at reduced size
+        // Capture frame at FULL size (3200x1600)
         const dataUrl = await toPng(previewRef.current, {
-          width: config.width,
-          height: config.height,
+          width: 3200,
+          height: 1600,
           pixelRatio: 1,
           cacheBust: true,
-          quality: 0.8,
         });
 
-        // Convert to image
-        const img = new Image();
+        // Load full-size image
+        const fullImg = new Image();
         await new Promise<void>((resolve, reject) => {
-          img.onload = () => resolve();
-          img.onerror = reject;
-          img.src = dataUrl;
+          fullImg.onload = () => resolve();
+          fullImg.onerror = reject;
+          fullImg.src = dataUrl;
         });
 
-        // Add frame to GIF
-        gif.addFrame(img, { delay: frameDelay, copy: true });
+        // Scale down to target size using canvas
+        const scaledCanvas = scaleImage(fullImg, config.width, config.height);
+
+        // Add scaled frame to GIF
+        gif.addFrame(scaledCanvas, { delay: frameDelay, copy: true });
 
         setProgress(Math.round(((frame + 1) / totalFrames) * 100));
       }
