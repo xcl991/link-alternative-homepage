@@ -274,14 +274,15 @@ const Preview = forwardRef<HTMLDivElement, PreviewProps>(({
             </div>
           )}
 
-          {/* Right Modal Footer (150% larger) */}
+          {/* Right Modal Footer (larger) */}
           {rightModalFooter && (
             <div className="mt-12 text-center px-6">
               <span
+                className="font-semibold"
                 style={{
-                  fontSize: '2rem', // 150% larger
+                  fontSize: '3rem', // Larger font
                   color: selectedStyle.primaryColor,
-                  textShadow: `0 0 20px ${selectedStyle.primaryColor}40`,
+                  textShadow: `0 0 25px ${selectedStyle.primaryColor}60`,
                 }}
               >
                 {rightModalFooter}
@@ -297,11 +298,11 @@ const Preview = forwardRef<HTMLDivElement, PreviewProps>(({
         {footer1Text && (
           <div className="text-center">
             <span
-              className="font-semibold"
+              className="font-bold"
               style={{
-                fontSize: '2.5rem', // 150% larger
+                fontSize: '3.5rem', // Larger font
                 color: selectedStyle.primaryColor,
-                textShadow: `0 0 30px ${selectedStyle.primaryColor}60`,
+                textShadow: `0 0 40px ${selectedStyle.primaryColor}80`,
               }}
             >
               {footer1Text}
