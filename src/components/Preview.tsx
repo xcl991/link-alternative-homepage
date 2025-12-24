@@ -3,6 +3,13 @@
 import { forwardRef, useState, useEffect } from 'react';
 import { WebsiteOption, RTPStyle, TextRow, RightModalImage } from '@/types';
 
+// Helper function to proxy external URLs for CORS
+const proxyUrl = (url: string) => {
+  if (!url) return '';
+  // Use our proxy API to fetch external images
+  return `/api/proxy-image?url=${encodeURIComponent(url)}`;
+};
+
 interface PreviewProps {
   selectedWebsite: WebsiteOption;
   selectedStyle: RTPStyle;
@@ -157,7 +164,7 @@ const Preview = forwardRef<HTMLDivElement, PreviewProps>(({
       style={{
         width: '3200px',
         height: '1600px',
-        backgroundImage: `url("${selectedBackground}")`,
+        backgroundImage: `url("${proxyUrl(selectedBackground)}")`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundColor: selectedStyle.backgroundColor,
@@ -174,8 +181,9 @@ const Preview = forwardRef<HTMLDivElement, PreviewProps>(({
       {/* Logo - Top Center */}
       <div className="absolute top-12 left-0 right-0 flex justify-center z-10">
         <img
-          src={selectedWebsite.logo}
+          src={proxyUrl(selectedWebsite.logo)}
           alt={selectedWebsite.name}
+          crossOrigin="anonymous"
           className="h-32 w-auto object-contain"
           style={{ filter: `drop-shadow(0 0 30px ${selectedStyle.primaryColor}80)` }}
         />
@@ -264,8 +272,9 @@ const Preview = forwardRef<HTMLDivElement, PreviewProps>(({
                 }}
               >
                 <img
-                  src={rightModalImages[currentImageIndex]?.url || ''}
+                  src={proxyUrl(rightModalImages[currentImageIndex]?.url || '')}
                   alt={rightModalImages[currentImageIndex]?.name || 'Image'}
+                  crossOrigin="anonymous"
                   className="w-full h-auto object-cover"
                   style={{ maxHeight: '600px' }}
                 />
