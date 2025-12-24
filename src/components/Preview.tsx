@@ -1,6 +1,6 @@
 'use client';
 
-import { forwardRef, useState, useEffect } from 'react';
+import { forwardRef } from 'react';
 import { WebsiteOption, RTPStyle, TextRow, RightModalImage } from '@/types';
 
 // Helper function to proxy external URLs for CORS
@@ -26,7 +26,7 @@ interface PreviewProps {
   animationFrame: number; // 0-based frame for GIF animation
 }
 
-// Wave text component - splits text into animated characters
+// Wave text component - splits text into animated characters (150% larger)
 const WaveText = ({ text, style, frame }: { text: string; style: RTPStyle; frame: number }) => {
   const chars = text.split('');
 
@@ -34,15 +34,16 @@ const WaveText = ({ text, style, frame }: { text: string; style: RTPStyle; frame
     <div className="flex justify-center items-center flex-wrap">
       {chars.map((char, idx) => {
         // Calculate wave offset based on frame and character position
-        const waveOffset = Math.sin((frame * 0.3 + idx * 0.3)) * 15;
+        const waveOffset = Math.sin((frame * 0.3 + idx * 0.3)) * 20;
 
         return (
           <span
             key={idx}
-            className="inline-block text-6xl font-black tracking-wider"
+            className="inline-block font-black tracking-wider"
             style={{
+              fontSize: '7rem', // 150% larger (was ~4rem/text-6xl)
               color: style.primaryColor,
-              textShadow: `0 0 20px ${style.primaryColor}, 0 0 40px ${style.primaryColor}80`,
+              textShadow: `0 0 30px ${style.primaryColor}, 0 0 60px ${style.primaryColor}80`,
               transform: `translateY(${waveOffset}px)`,
               transition: 'transform 0.1s ease-out',
             }}
@@ -55,48 +56,47 @@ const WaveText = ({ text, style, frame }: { text: string; style: RTPStyle; frame
   );
 };
 
-// Google search bar component with blinking cursor
+// Google search bar component with blinking cursor (150% larger)
 const GoogleSearchBar = ({ text, style, isVisible }: { text: string; style: RTPStyle; isVisible: boolean }) => {
   return (
-    <div className="flex justify-center mt-8">
-      <div
-        className="bg-white rounded-full px-8 py-4 flex items-center gap-4 shadow-lg"
-        style={{
-          minWidth: '500px',
-          boxShadow: `0 0 30px ${style.primaryColor}40`
-        }}
-      >
-        {/* Google Logo */}
-        <div className="flex items-center gap-1 text-2xl font-bold">
-          <span style={{ color: '#4285F4' }}>G</span>
-          <span style={{ color: '#EA4335' }}>o</span>
-          <span style={{ color: '#FBBC05' }}>o</span>
-          <span style={{ color: '#4285F4' }}>g</span>
-          <span style={{ color: '#34A853' }}>l</span>
-          <span style={{ color: '#EA4335' }}>e</span>
-        </div>
-        {/* Search input */}
-        <div className="flex-1 flex items-center border-2 border-gray-300 rounded-full px-4 py-2">
-          <span
-            className="text-xl text-gray-800 font-semibold"
-            style={{
-              opacity: isVisible ? 1 : 0.3,
-              transition: 'opacity 0.3s ease-in-out'
-            }}
-          >
-            {text}
-          </span>
-          <span
-            className="ml-1 w-0.5 h-6 bg-gray-800"
-            style={{ opacity: isVisible ? 1 : 0 }}
-          />
-        </div>
+    <div
+      className="bg-white rounded-full px-12 py-6 flex items-center gap-6 shadow-lg"
+      style={{
+        minWidth: '750px',
+        boxShadow: `0 0 40px ${style.primaryColor}40`
+      }}
+    >
+      {/* Google Logo */}
+      <div className="flex items-center gap-1 font-bold" style={{ fontSize: '2.5rem' }}>
+        <span style={{ color: '#4285F4' }}>G</span>
+        <span style={{ color: '#EA4335' }}>o</span>
+        <span style={{ color: '#FBBC05' }}>o</span>
+        <span style={{ color: '#4285F4' }}>g</span>
+        <span style={{ color: '#34A853' }}>l</span>
+        <span style={{ color: '#EA4335' }}>e</span>
+      </div>
+      {/* Search input */}
+      <div className="flex-1 flex items-center border-2 border-gray-300 rounded-full px-6 py-3">
+        <span
+          className="text-gray-800 font-semibold"
+          style={{
+            fontSize: '2rem',
+            opacity: isVisible ? 1 : 0.3,
+            transition: 'opacity 0.3s ease-in-out'
+          }}
+        >
+          {text}
+        </span>
+        <span
+          className="ml-2 w-1 h-10 bg-gray-800"
+          style={{ opacity: isVisible ? 1 : 0 }}
+        />
       </div>
     </div>
   );
 };
 
-// Blinking modal component
+// Blinking modal component (150% larger)
 const BlinkingModal = ({
   title,
   style,
@@ -108,22 +108,23 @@ const BlinkingModal = ({
 }) => {
   return (
     <div
-      className="px-8 py-4 rounded-xl text-center"
+      className="px-12 py-6 rounded-2xl text-center"
       style={{
         background: `linear-gradient(135deg, ${style.primaryColor}30, ${style.accentColor}20)`,
-        border: `3px solid ${style.primaryColor}`,
+        border: `4px solid ${style.primaryColor}`,
         boxShadow: isVisible
-          ? `0 0 40px ${style.primaryColor}, 0 0 80px ${style.primaryColor}60`
-          : `0 0 20px ${style.primaryColor}40`,
+          ? `0 0 60px ${style.primaryColor}, 0 0 120px ${style.primaryColor}60`
+          : `0 0 30px ${style.primaryColor}40`,
         transform: isVisible ? 'scale(1.02)' : 'scale(1)',
         transition: 'all 0.3s ease-in-out',
       }}
     >
       <span
-        className="text-4xl font-black"
+        className="font-black"
         style={{
+          fontSize: '4rem', // 150% larger (was ~2.5rem/text-4xl)
           color: style.secondaryColor,
-          textShadow: `0 0 20px ${style.secondaryColor}`,
+          textShadow: `0 0 30px ${style.secondaryColor}`,
           opacity: isVisible ? 1 : 0.6,
         }}
       >
@@ -178,45 +179,46 @@ const Preview = forwardRef<HTMLDivElement, PreviewProps>(({
         }}
       />
 
-      {/* Logo - Top Center */}
-      <div className="absolute top-12 left-0 right-0 flex justify-center z-10">
+      {/* Logo - Top Center (100% larger: h-32 → h-64) */}
+      <div className="absolute top-8 left-0 right-0 flex justify-center z-10">
         <img
           src={proxyUrl(selectedWebsite.logo)}
           alt={selectedWebsite.name}
           crossOrigin="anonymous"
-          className="h-32 w-auto object-contain"
-          style={{ filter: `drop-shadow(0 0 30px ${selectedStyle.primaryColor}80)` }}
+          className="h-64 w-auto object-contain"
+          style={{ filter: `drop-shadow(0 0 40px ${selectedStyle.primaryColor}80)` }}
         />
       </div>
 
-      {/* Content Container */}
-      <div className="absolute inset-0 flex pt-48 px-12 pb-12 z-10">
-        {/* Left Modal - 65% width - Frameless */}
-        <div className="w-[65%] flex flex-col justify-center items-center pr-8">
+      {/* Main Content Container - Left and Right Modals */}
+      <div className="absolute top-72 left-0 right-0 bottom-64 flex px-12 z-10">
+        {/* Left Modal - 60% width - Frameless (150% larger content) */}
+        <div className="w-[60%] flex flex-col justify-center items-center pr-8">
           {/* Header with Wave Effect */}
           {headerText && (
-            <div className="mb-12">
+            <div className="mb-16">
               <WaveText text={headerText} style={selectedStyle} frame={animationFrame} />
             </div>
           )}
 
-          {/* Text Lines */}
-          <div className="w-full max-w-3xl space-y-6">
+          {/* Text Lines (150% larger) */}
+          <div className="w-full max-w-4xl space-y-8">
             {allTexts.map((text, idx) => (
               <div
                 key={idx}
-                className="px-10 py-5 rounded-2xl text-center"
+                className="px-16 py-8 rounded-3xl text-center"
                 style={{
                   background: `linear-gradient(135deg, ${selectedStyle.accentColor}90 0%, ${selectedStyle.accentColor}60 100%)`,
-                  border: `3px solid ${selectedStyle.primaryColor}60`,
-                  boxShadow: `0 10px 40px ${selectedStyle.primaryColor}30`,
+                  border: `4px solid ${selectedStyle.primaryColor}60`,
+                  boxShadow: `0 15px 60px ${selectedStyle.primaryColor}30`,
                 }}
               >
                 <span
-                  className="text-4xl font-bold"
+                  className="font-bold"
                   style={{
+                    fontSize: '4rem', // 150% larger (was ~2.5rem/text-4xl)
                     color: selectedStyle.secondaryColor,
-                    textShadow: '0 2px 10px rgba(0,0,0,0.5)',
+                    textShadow: '0 3px 15px rgba(0,0,0,0.5)',
                   }}
                 >
                   {text}
@@ -224,34 +226,10 @@ const Preview = forwardRef<HTMLDivElement, PreviewProps>(({
               </div>
             ))}
           </div>
-
-          {/* Footer 1 - Instruction */}
-          {footer1Text && (
-            <div className="mt-12 text-center">
-              <span
-                className="text-3xl font-semibold"
-                style={{
-                  color: selectedStyle.primaryColor,
-                  textShadow: `0 0 20px ${selectedStyle.primaryColor}60`,
-                }}
-              >
-                {footer1Text}
-              </span>
-            </div>
-          )}
-
-          {/* Google Search Bar with Blinking */}
-          {searchBarText && (
-            <GoogleSearchBar
-              text={searchBarText}
-              style={selectedStyle}
-              isVisible={blinkVisible}
-            />
-          )}
         </div>
 
-        {/* Right Modal - 35% width */}
-        <div className="w-[35%] flex flex-col justify-center items-center pl-8">
+        {/* Right Modal - 40% width (150% larger content) */}
+        <div className="w-[40%] flex flex-col justify-center items-center pl-8">
           {/* Blinking Title Modal */}
           {rightModalTitle && (
             <BlinkingModal
@@ -261,14 +239,14 @@ const Preview = forwardRef<HTMLDivElement, PreviewProps>(({
             />
           )}
 
-          {/* Image Slideshow */}
+          {/* Image Slideshow (150% larger) */}
           {rightModalImages.length > 0 && (
-            <div className="mt-8 w-full max-w-lg">
+            <div className="mt-12 w-full max-w-2xl">
               <div
-                className="rounded-2xl overflow-hidden"
+                className="rounded-3xl overflow-hidden"
                 style={{
-                  border: `4px solid ${selectedStyle.primaryColor}60`,
-                  boxShadow: `0 10px 50px ${selectedStyle.primaryColor}40`,
+                  border: `6px solid ${selectedStyle.primaryColor}60`,
+                  boxShadow: `0 15px 75px ${selectedStyle.primaryColor}40`,
                 }}
               >
                 <img
@@ -276,15 +254,18 @@ const Preview = forwardRef<HTMLDivElement, PreviewProps>(({
                   alt={rightModalImages[currentImageIndex]?.name || 'Image'}
                   crossOrigin="anonymous"
                   className="w-full h-auto object-cover"
-                  style={{ maxHeight: '600px' }}
+                  style={{ maxHeight: '700px' }}
                 />
               </div>
               {/* Image name */}
               {rightModalImages[currentImageIndex]?.name && (
-                <div className="mt-4 text-center">
+                <div className="mt-6 text-center">
                   <span
-                    className="text-2xl font-semibold"
-                    style={{ color: selectedStyle.secondaryColor }}
+                    className="font-semibold"
+                    style={{
+                      fontSize: '2.5rem', // 150% larger
+                      color: selectedStyle.secondaryColor
+                    }}
                   >
                     {rightModalImages[currentImageIndex].name}
                   </span>
@@ -293,14 +274,14 @@ const Preview = forwardRef<HTMLDivElement, PreviewProps>(({
             </div>
           )}
 
-          {/* Right Modal Footer */}
+          {/* Right Modal Footer (150% larger) */}
           {rightModalFooter && (
-            <div className="mt-8 text-center px-4">
+            <div className="mt-12 text-center px-6">
               <span
-                className="text-2xl"
                 style={{
+                  fontSize: '2rem', // 150% larger
                   color: selectedStyle.primaryColor,
-                  textShadow: `0 0 15px ${selectedStyle.primaryColor}40`,
+                  textShadow: `0 0 20px ${selectedStyle.primaryColor}40`,
                 }}
               >
                 {rightModalFooter}
@@ -308,6 +289,34 @@ const Preview = forwardRef<HTMLDivElement, PreviewProps>(({
             </div>
           )}
         </div>
+      </div>
+
+      {/* Center Footer - Google Search Bar and Instruction */}
+      <div className="absolute bottom-8 left-0 right-0 z-10 flex flex-col items-center gap-6">
+        {/* Footer 1 - Instruction */}
+        {footer1Text && (
+          <div className="text-center">
+            <span
+              className="font-semibold"
+              style={{
+                fontSize: '2.5rem', // 150% larger
+                color: selectedStyle.primaryColor,
+                textShadow: `0 0 30px ${selectedStyle.primaryColor}60`,
+              }}
+            >
+              {footer1Text}
+            </span>
+          </div>
+        )}
+
+        {/* Google Search Bar with Blinking */}
+        {searchBarText && (
+          <GoogleSearchBar
+            text={searchBarText}
+            style={selectedStyle}
+            isVisible={blinkVisible}
+          />
+        )}
       </div>
     </div>
   );

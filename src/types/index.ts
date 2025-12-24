@@ -3,6 +3,7 @@ export interface WebsiteOption {
   name: string;
   logo: string;
   backgrounds?: string[];
+  slideshowImages?: string[];
 }
 
 export interface RTPStyle {

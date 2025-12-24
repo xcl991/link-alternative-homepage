@@ -45,6 +45,9 @@ export const WEBSITES: WebsiteOption[] = [
     backgrounds: [
       "https://ik.imagekit.io/xcl991/mv1.jpg",
       "https://ik.imagekit.io/xcl991/mv2.png"
+    ],
+    slideshowImages: [
+      "https://ik.imagekit.io/xcl991/marvel"
     ]
   },
   {
@@ -73,6 +76,9 @@ export const WEBSITES: WebsiteOption[] = [
     backgrounds: [
       "https://ik.imagekit.io/xcl991/rp1.jpg",
       "https://ik.imagekit.io/xcl991/rp2.png"
+    ],
+    slideshowImages: [
+      "https://ik.imagekit.io/xcl991/republik"
     ]
   },
   {
@@ -82,6 +88,9 @@ export const WEBSITES: WebsiteOption[] = [
     backgrounds: [
       "https://ik.imagekit.io/xcl991/tp1.png",
       "https://ik.imagekit.io/xcl991/tp2.png"
+    ],
+    slideshowImages: [
+      "https://ik.imagekit.io/xcl991/taipan"
     ]
   },
   {

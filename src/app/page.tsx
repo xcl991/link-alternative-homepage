@@ -69,10 +69,20 @@ export default function HomePage() {
     return [...categories, ...defaultBgCategories];
   }, [selectedWebsite]);
 
-  // Auto-select exclusive background when website changes
+  // Auto-select exclusive background and slideshow images when website changes
   useEffect(() => {
     if (selectedWebsite.backgrounds && selectedWebsite.backgrounds.length > 0) {
       setSelectedBackground(selectedWebsite.backgrounds[0]);
+    }
+    // Auto-load slideshow images if available
+    if (selectedWebsite.slideshowImages && selectedWebsite.slideshowImages.length > 0) {
+      setRightModalImages(
+        selectedWebsite.slideshowImages.map((url, idx) => ({
+          id: `slideshow-${idx}`,
+          url,
+          name: ''
+        }))
+      );
     }
   }, [selectedWebsite]);
 
